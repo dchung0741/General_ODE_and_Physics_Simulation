@@ -24,7 +24,7 @@ def IC(*Initial_Condition):
 
 
 """Solve with RK algorithm"""    
-def IC_ODE(order, F, t0, tN, IC, kind, N = 10000.):
+def IC_ODE(order, F, t0, tN, IC, kind, N = 10000):
     t = linspace(t0,tN,N+1)
     eps = (tN-t0)/N
     Parameters = len(F)
@@ -162,7 +162,7 @@ def BC_ODE(order, F, t0, tN, left, right, kind):
         for i in range(0, len(UIP)):
             initial.insert(UIP[i], Try_List[i])
         
-        trial = IC_ODE(order, F, t0, tN, initial, 'self_define', 10000.)
+        trial = IC_ODE(order, F, t0, tN, initial, 'self_define', 10000)
         
         thetas = []
         for i in range(0, len(UIP)):

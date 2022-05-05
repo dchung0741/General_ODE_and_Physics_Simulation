@@ -6,9 +6,11 @@ Created on Tue May 02 12:16:09 2017
 """
 from numpy import*
 import numpy as np
-import pyAnimate as Ani
 import General_ODE as Sol
 import scipy.constants as const
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
 
 #Constants
 g0 = const.g
@@ -49,18 +51,50 @@ def Fz(t,X):
 
 F = [Fx, Fy, Fz]
 
-T = 2*V0[2]/g0
+T = 2*V0[2]/g0 * 10
+
+N = 10000
+sol = Sol.IC_ODE(2, F, 0., T, IC_Coriolis, 'self_define', N)
 
 
-sol = Sol.IC_ODE(2, F, 0., T, IC_Coriolis, 'self_define')
-#Sol.BC_ODE(2, F, 0., T, [[0., None],[0., None],[0., None]],[[V0[0]*T, None],[0., None],[0.,None]], 'self_define')
 
-#ani = Ani.animate()
-#ani.setX(sol[0])
-#ani.setY(sol[1])
-#ani.setZ(sol[3])
-#ani.setSpeed(5)
-#ani.show2d()
-p1 = Ani.dataSet(sol[0], sol[1], sol[2])
-f1 = Ani.figure(p1)
-Animate(p1)
+set_speed = 10
+
+x = sol[0][::set_speed]
+y = sol[1][::set_speed]
+z = sol[2][::set_speed]
+
+fig = plt.figure()
+ax = plt.axes(xlim = (min(x), max(x)), ylim=(min(y), max(y)))
+
+star1, = ax.plot([], [], '-b')
+starline1, = ax.plot([], [], '--ob')
+
+ax.set_xlim( min(x), max(x) )
+ax.set_ylim( min(y), max(y) )
+
+# initialization function: plot the background of each frame (2D)
+def init():
+
+    star1.set_data([], [])
+    starline1.set_data([], [])
+    
+    return star1, starline1, 
+
+# Animate 2d
+def animate(i):
+
+    X = x[:i]
+    Y = y[:i]
+
+    star1.set_data(X, Y)
+    starline1.set_data([0, x[i]], [0, y[i]])
+
+    return star1, starline1,
+
+
+
+anim = animation.FuncAnimation(fig, animate, init_func=init,
+                            frames = N//set_speed, interval= 10, blit=True)
+
+plt.show()

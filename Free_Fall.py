@@ -9,7 +9,7 @@ Created on Sat Sep  9 22:03:27 2017
 from numpy import*
 import numpy as np
 import scipy.constants as const
-import ODE.General_ODE as Solve
+import General_ODE as Solve
 import matplotlib.pyplot as plt
 
 k = 1.
@@ -44,3 +44,4 @@ for i in range(0, len(t)):
 plt.axhline(y = -vt, color = 'red')
 plt.plot(t, VZ, 'o')
 plt.grid()
+plt.show()

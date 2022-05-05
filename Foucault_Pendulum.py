@@ -7,14 +7,15 @@ Created on Sun May 07 15:15:04 2017
 from numpy import*
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import scipy.constants as const
 import General_ODE as Solve
-import Animate as Ani
+
 
 m = 10.
 l = 1.
 g = const.g
-omega = 10.**2
+omega = 10*-1.
 latitude = np.radians(30.)
 omegaz = omega*sin(latitude)
 
@@ -40,12 +41,47 @@ theta0 = np.radians(1.)
 IC_Foucault = Solve.IC([l*sin(theta0), 0., 0.], [0., 0., 0.])
 
 T = 2*pi *sqrt(l/g)
-sol = Solve.IC_ODE(2, F_Foucault, 0., 100.*T, IC_Foucault, 'self_define', 100000.)
+N = 100000
+sol = Solve.IC_ODE(2, F_Foucault, 0., 100.*T, IC_Foucault, 'self_define', N = N)
 
 
-a = Ani.animate()
-a.setX(sol[0])
-a.setY(sol[1])
-#a.setZ(sol[2])
-a.setSpeed(100)
-a.show2d()
+set_speed = 10
+
+x = sol[0][::set_speed]
+y = sol[1][::set_speed]
+z = sol[2][::set_speed]
+
+fig = plt.figure()
+ax = plt.axes(xlim = (min(x), max(x)), ylim=(min(y), max(y)))
+
+star1, = ax.plot([], [], '-b')
+starline1, = ax.plot([], [], '--or')
+
+ax.set_xlim( min(x), max(x) )
+ax.set_ylim( min(y), max(y) )
+
+# initialization function: plot the background of each frame (2D)
+def init():
+
+    star1.set_data([], [])
+    starline1.set_data([], [])
+    
+    return star1, starline1, 
+
+# Animate 2d
+def animate(i):
+
+    X = x[:i]
+    Y = y[:i]
+
+    star1.set_data(X, Y)
+    starline1.set_data([0, x[i]], [0, y[i]])
+
+    return star1, starline1,
+
+
+
+anim = animation.FuncAnimation(fig, animate, init_func=init,
+                            frames = N//set_speed, interval= 10, blit=True)
+
+plt.show()
