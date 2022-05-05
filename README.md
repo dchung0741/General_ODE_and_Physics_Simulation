@@ -7,7 +7,7 @@ Boundary problems are solved by the function BC_ODE where the shooting method is
 
 Examples:
 1. Binary Star Motion: https://www.youtube.com/playlist?list=PL8tyiTbBgUH4850S9o7jq4yoVOJ35q8Ie
-2. Foucault Pendulum: Foucault Pendulum
+2. Foucault Pendulum: https://youtu.be/rOJDe-Ru2Z4
 3. Top Precession Nutation:
 
 
