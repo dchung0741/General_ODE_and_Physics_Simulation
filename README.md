@@ -13,4 +13,5 @@ Examples:
 
 
 Additional simulations without differential equations:
+
 Geometric optics - Mirror reflect: https://www.youtube.com/playlist?list=PL8tyiTbBgUH5hsXHEtbS22AUNH5b_lLgf
