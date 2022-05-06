@@ -12,11 +12,12 @@ import General_ODE as Solve
 import scipy.constants as const
 import matplotlib.pyplot as plt
 from matplotlib import animation
+from matplotlib.offsetbox import AnchoredText
 # import mpl_toolkits.mplot3d.axes3d as p3
 # from PIL import Image 
 # from Animate import animate
 
-g = const.g * 10
+g = const.g
 
 
 # Dimension of the Top (Cone)
@@ -72,8 +73,8 @@ theta = sol[0]
 phi = sol[1]
 psi = sol[2]
 w = psi[1]-psi[0]
-print (w)
-
+# print (w)
+traj = [x, y, z]
 
 # a = animate()
 
@@ -83,30 +84,94 @@ print (w)
 # a.setSpeed(2)
 # a.show3d()
 
-"""
-plot 3d animate
-"""
 
-fig = plt.figure()
-ax = fig.add_subplot(projection = "3d")
-line = [ax.plot([], [], [])[0] for _ in range(2)]
 
-traj = [x, y, z]
+##############################################################################
+# 3D Animate
+##############################################################################
+
+fig = plt.figure(figsize=(8, 8))
+fig.patch.set_facecolor('xkcd:mint green')
+anchored_text = AnchoredText("Test", loc=2)
+
+
+ax_1 = fig.add_subplot(221, projection = "3d")
+line = [ax_1.plot([], [], [])[0] for _ in range(2)]
+ax_1.set_title('3D View')
+ax_1.set_xticklabels([])
+ax_1.set_xticks([])
+ax_1.set_yticklabels([])
+ax_1.set_yticks([])
+ax_1.set_zticklabels([])
+ax_1.set_zticks([])
+ax_1.set(xlim3d=(min(x), max(x)), xlabel='X')
+ax_1.set(ylim3d=(min(y), max(y)), ylabel='Y')
+ax_1.set(zlim3d=(min([0] + list(z)), max(z)), zlabel='Z')
+
+
+ax_text = fig.add_subplot(223)
+ax_text.set_title('Info')
+ax_text.set_xticklabels([])
+ax_text.set_xticks([])
+ax_text.set_yticklabels([])
+ax_text.set_yticks([])
+ax_text.text(0.1, 0.53, f'Top spinning velocity: {psi_dot:.1e} rps. \n Top height: {H}. \n Top head radius: {R}. \n Top mass: {M}')
+ax_text.patch.set_facecolor('red')
+ax_text.patch.set_alpha(0)
+ax_text.spines['left'].set_visible(False)
+ax_text.spines['right'].set_visible(False)
+ax_text.spines['top'].set_visible(False)
+ax_text.spines['bottom'].set_visible(False)
+
+ax_2 = fig.add_subplot(222)
+ax_2.set_title('Top View')
+top_line = [ax_2.plot([], [])[0] for _ in range(2)]
+ax_2.set_xticklabels([])
+ax_2.set_xticks([])
+ax_2.set_yticklabels([])
+ax_2.set_yticks([])
+ax_2.set(xlim=(min(x), max(x)), xlabel='X')
+ax_2.set(ylim=(min(y), max(y)), ylabel='Y')
+
+ax_3 = fig.add_subplot(224)
+ax_3.set_title('Side View')
+side_line = [ax_3.plot([], [])[0] for _ in range(2)]
+ax_3.set_xticklabels([])
+ax_3.set_xticks([])
+ax_3.set_yticklabels([])
+ax_3.set_yticks([])
+ax_3.set(xlim=(min(x), max(x)), xlabel='X')
+ax_3.set(ylim=(0, max(z)), ylabel='Z')
+
+
 
 def update_lines(num, traj, line):
     
     # NOTE: there is no .set_data() for 3 dim data...
-    line[0].set_data(array([0, traj[0][num]]), array([0, traj[1][num]]))
-    line[0].set_3d_properties(array([0, traj[2][num]]))
+    x_traj = traj[0][:num]
+    y_traj = traj[1][:num]
+    z_traj = traj[2][:num]
 
-    line[1].set_data(traj[0][:num], traj[1][:num])
-    line[1].set_3d_properties(traj[2][:num])
+    x_head = traj[0][num]
+    y_head = traj[1][num]
+    z_head = traj[2][num]
+
+    line[0].set_data(array([0, x_head]), array([0, y_head]))
+    line[0].set_3d_properties(array([0, z_head]))
+
+    line[1].set_data(x_traj, y_traj)
+    line[1].set_3d_properties(z_traj)
+
+    top_line[0].set_data(array([0, x_head]), array([0, y_head]))
+    top_line[1].set_data(x_traj, y_traj)
+
+    side_line[0].set_data(array([0, x_head]), array([0, z_head]))
+    side_line[1].set_data(x_traj, z_traj)
+
 
     return line
 
-ax.set(xlim3d=(min(x), max(x)), xlabel='X')
-ax.set(ylim3d=(min(y), max(y)), ylabel='Y')
-ax.set(zlim3d=(0, max(z)), zlabel='Z')
+
 
 ani = animation.FuncAnimation(fig, update_lines, N, fargs=(traj, line), interval=100)
 

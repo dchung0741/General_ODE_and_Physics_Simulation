@@ -8,49 +8,16 @@ Created on Sun Oct 28 23:05:44 2018
 
 from numpy import*
 import numpy as np
-from numpy import inf
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.axes3d as p3
 from matplotlib import animation
 import General_ODE as Solve
 import matplotlib.pyplot as plt
 
-
-############################################################################################################################################
-# User Interface
-############################################################################################################################################
-
-
-# Initial Condition
-test_case = [
-    {
-    'm1': 1, 'm2': 2, 'G': -2,
-    'x10': 100, 'x20': -100, 'y10': 0, 'y20': 0, 'z10': 0, 'z20': 0,
-    'vx10': 0, 'vx20': 0, 'vy10': -0.05, 'vy20': 0.05, 'vz10': 0, 'vz20': 0,
-    'run_time': 10000, 'N': 10000, 'refresh_time': 10
-    },
-
-    {
-    'm1': 1, 'm2': 50000, 'G': -1,
-    'x10': 0, 'x20': 0, 'y10': 0, 'y20': -30, 'z10': 0, 'z20': 0,
-    'vx10': 0, 'vx20': 10, 'vy10': 0, 'vy20': 0, 'vz10': 0, 'vz20': 0,
-    'run_time': 20, 'N': 100000, 'refresh_time': 10
-    }
-    ]
-
-test_case_num = 1
-
-
 ### Constants
-m1 = test_case[test_case_num]['m1']
-m2 = test_case[test_case_num]['m2']
-G = test_case[test_case_num]['G']
-
-
-set_speed = 10
-run_time = test_case[test_case_num]['run_time']
-############################################################################################################################################
-
+m1 = 1.
+m2 = 2.
+G = -2.
 
 ### The ODEs
 def F21x(t, X):
@@ -82,39 +49,58 @@ def F12z(t, X):
 F = [F21x, F12x, F21y, F12y, F21z, F12z]
 
 ### Initial Conditions
-x10 = test_case[test_case_num]['x10']
-x20 = test_case[test_case_num]['x20']
-y10 = test_case[test_case_num]['y10']
-y20 = test_case[test_case_num]['y20']
-z10 = test_case[test_case_num]['z10']
-z20 = test_case[test_case_num]['z20']
+x10 = 100.
+x20 = -100.
+y10 = 0.
+y20 = 0.
+z10 = 0.
+z20 = 0.
 
-vx10 = test_case[test_case_num]['vx10']
-vx20 = test_case[test_case_num]['vx20']
-vy10 = test_case[test_case_num]['vy10']
-vy20 = test_case[test_case_num]['vy20']
-vz10 = test_case[test_case_num]['vz10']
-vz20 = test_case[test_case_num]['vz20']
+vx10 = 0.
+vx20 = 0.
+vy10 = -0.05
+vy20 = 0.05
+vz10 = 0.
+vz20 = 0.
 
 
 initial_cond = [x10, x20, y10, y20, z10, z20, vx10, vx20, vy10, vy20, vz10, vz20]
 
 
 ###
-N = test_case[test_case_num]['N']
-t_int = run_time
+N = 10000
+t_int = 10000.
 sol = Solve.IC_ODE(2, F, 0., t_int, initial_cond, 'self_define', N)
 t = Solve.IC_ODE(2, F, 0., t_int, initial_cond, 'time', N)
 
+x1 = sol[0]
+x2 = sol[1]
+y1 = sol[2]
+y2 = sol[3]
+z1 = sol[4]
+z2 = sol[5]
+
+print(x1)
+print(x2)
 
 """ Animate """
 
-x1 = sol[0][::set_speed]
-x2 = sol[1][::set_speed]
-y1 = sol[2][::set_speed]
-y2 = sol[3][::set_speed]
-z1 = sol[4][::set_speed]
-z2 = sol[5][::set_speed]
+set_speed = 10
+
+x1_thin = []
+x2_thin = []
+y1_thin = []
+y2_thin = []
+z1_thin = []
+z2_thin = []
+
+for i in range(0, N+1, set_speed):
+    x1_thin.append(x1[i])
+    x2_thin.append(x2[i])
+    y1_thin.append(y1[i])
+    y2_thin.append(y2[i])
+    z1_thin.append(z1[i])
+    z2_thin.append(z2[i])
 
 
 
@@ -122,9 +108,11 @@ z2 = sol[5][::set_speed]
 # Animate 
 #############################################################################################
 
-Ani_3d = False
+Ani_3d = True
 
 fig = plt.figure()
+
+
 
 if Ani_3d:
 
@@ -162,26 +150,26 @@ if Ani_3d:
     # Animate 3d
     def animate(i):
     
-        X1 = x1[:i]
-        Y1 = y1[:i]
-        Z1 = z1[:i]
+        X1 = x1_thin[:i]
+        Y1 = y1_thin[:i]
+        Z1 = z1_thin[:i]
         
         star1.set_data(X1, Y1)
-        starline1.set_data([0, x1[i]], [0, y1[i]])
+        starline1.set_data([0, x1_thin[i]], [0, y1_thin[i]])
         
         star1.set_3d_properties(array(Z1))
-        starline1.set_3d_properties(array([0, z1[i]]))
+        starline1.set_3d_properties(array([0, z1_thin[i]]))
         
         
-        X2 = x2[:i]
-        Y2 = y2[:i]
-        Z2 = z2[:i]
+        X2 = x2_thin[:i]
+        Y2 = y2_thin[:i]
+        Z2 = z2_thin[:i]
         
         star2.set_data(X2, Y2)
-        starline2.set_data([0, x2[i]], [0, y2[i]])
+        starline2.set_data([0, x2_thin[i]], [0, y2_thin[i]])
         
         star2.set_3d_properties(array(Z2))
-        starline2.set_3d_properties(array([0, z2[i]]))
+        starline2.set_3d_properties(array([0, z2_thin[i]]))
         
         return star1, starline1, star2, starline2,
 
@@ -213,27 +201,25 @@ else:
     # Animate 2d
     def animate(i):
     
-        X1 = x1[:i]
-        Y1 = y1[:i]
+        X1 = x1_thin[:i]
+        Y1 = y1_thin[:i]
 
         star1.set_data(X1, Y1)
-        starline1.set_data([0, x1[i]], [0, y1[i]])
+        starline1.set_data([0, x1_thin[i]], [0, y1_thin[i]])
 
 
-        X2 = x2[:i]
-        Y2 = y2[:i]
+        X2 = x2_thin[:i]
+        Y2 = y2_thin[:i]
 
         star2.set_data(X2, Y2)
-        starline2.set_data([0, x2[i]], [0, y2[i]])
+        starline2.set_data([0, x2_thin[i]], [0, y2_thin[i]])
 
         return star1, starline1, star2, starline2,
 
 
 
-anim = animation.FuncAnimation(fig, animate, init_func = init,
-                               frames = N//set_speed, 
-                               interval= test_case[test_case_num]['refresh_time'], 
-                               blit = True)
+anim = animation.FuncAnimation(fig, animate, init_func=init,
+                               frames=N, interval= 10, blit=True)
 
 plt.show()
 
