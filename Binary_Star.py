@@ -14,10 +14,35 @@ from matplotlib import animation
 import General_ODE as Solve
 import matplotlib.pyplot as plt
 
+
+############################################################################################################################################
+# User Interface
+############################################################################################################################################
+
+
+# Initial Condition
+test_case = [
+    {
+    'm1': 1, 'm2': 2, 'G': -2,
+    'x10': 100, 'x20': -100, 'y10': 0, 'y20': 0, 'z10': 0, 'z20': 0,
+    'vx10': 0, 'vx20': 0, 'vy10': -0.05, 'vy20': 0.05, 'vz10': 0, 'vz20': 0,
+    'run_time': 10000, 'N': 10000, 'refresh_time': 10
+    },
+
+    {
+    'm1': 1, 'm2': 50000, 'G': -1,
+    'x10': 0, 'x20': 0, 'y10': 0, 'y20': -30, 'z10': 0, 'z20': 0,
+    'vx10': 0, 'vx20': 10, 'vy10': 0, 'vy20': 0, 'vz10': 0, 'vz20': 0,
+    'run_time': 20, 'N': 100000, 'refresh_time': 10
+    }
+    ]
+
+test_case_num = 1
+
 ### Constants
-m1 = 1.
-m2 = 2.
-G = -2.
+m1 = test_case[test_case_num]['m1']
+m2 = test_case[test_case_num]['m2']
+G = test_case[test_case_num]['G']
 
 ### The ODEs
 def F21x(t, X):
@@ -49,27 +74,27 @@ def F12z(t, X):
 F = [F21x, F12x, F21y, F12y, F21z, F12z]
 
 ### Initial Conditions
-x10 = 100.
-x20 = -100.
-y10 = 0.
-y20 = 0.
-z10 = 0.
-z20 = 0.
+x10 = test_case[test_case_num]['x10']
+x20 = test_case[test_case_num]['x20']
+y10 = test_case[test_case_num]['y10']
+y20 = test_case[test_case_num]['y20']
+z10 = test_case[test_case_num]['z10']
+z20 = test_case[test_case_num]['z20']
 
-vx10 = 0.
-vx20 = 0.
-vy10 = -0.05
-vy20 = 0.05
-vz10 = 0.
-vz20 = 0.
+vx10 = test_case[test_case_num]['vx10']
+vx20 = test_case[test_case_num]['vx20']
+vy10 = test_case[test_case_num]['vy10']
+vy20 = test_case[test_case_num]['vy20']
+vz10 = test_case[test_case_num]['vz10']
+vz20 = test_case[test_case_num]['vz20']
 
 
 initial_cond = [x10, x20, y10, y20, z10, z20, vx10, vx20, vy10, vy20, vz10, vz20]
 
 
 ###
-N = 10000
-t_int = 10000.
+N = test_case[test_case_num]['N']
+t_int = test_case[test_case_num]['run_time']
 sol = Solve.IC_ODE(2, F, 0., t_int, initial_cond, 'self_define', N)
 t = Solve.IC_ODE(2, F, 0., t_int, initial_cond, 'time', N)
 
@@ -219,7 +244,7 @@ else:
 
 
 anim = animation.FuncAnimation(fig, animate, init_func=init,
-                               frames=N, interval= 10, blit=True)
+                               frames=N, interval= test_case[test_case_num]['refresh_time'], blit=True)
 
 plt.show()
 
