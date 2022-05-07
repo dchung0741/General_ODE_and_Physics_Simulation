@@ -121,7 +121,7 @@ ax_text.patch.set_alpha(0)
 ax_text.spines['left'].set_visible(False)
 ax_text.spines['right'].set_visible(False)
 ax_text.spines['top'].set_visible(False)
-ax_text.spines['bottom'].set_visible(False)
+ax_text.spines['bottom｀'].set_visible(False)
 
 ax_2 = fig.add_subplot(222)
 ax_2.set_title('Top View')
